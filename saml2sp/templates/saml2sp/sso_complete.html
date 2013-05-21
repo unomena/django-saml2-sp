@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+
+{% block content %}
+Welcome, {{ user.get_username }}!<br />
+<hr>
+You are now signed in at the Service Provider.<br />
+You may continue to your original destination by clicking <a href="{{ sso_destination }}">here</a><br />
+{% endblock content %}
