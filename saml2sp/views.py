@@ -26,13 +26,8 @@ def xml_response(request, template, tv):
     return render_to_response(template, tv, mimetype="application/xml")
 
 
-#TODO: Pull IDP choices from a model. For now, just use the one from the settings.
-IDP_CHOICES = (
-    (saml2sp_settings.SAML2SP_IDP_REQUEST_URL,
-     saml2sp_settings.SAML2SP_IDP_REQUEST_URL),
-)
 class IdpSelectionForm(forms.Form):
-    idp = forms.ChoiceField(choices=IDP_CHOICES)
+    idp = forms.ChoiceField(choices=settings.IDP_CHOICES)
 
 def _get_entity_id(request):
     entity_id = saml2sp_settings.SAML2SP_ENTITY_ID
