@@ -11,6 +11,7 @@ from django.core.urlresolvers import reverse
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth import get_backends, REDIRECT_FIELD_NAME, login as auth_login
 # Other imports
 from BeautifulSoup import BeautifulStoneSoup
 # Local imports
@@ -86,7 +87,7 @@ def _get_attributes_from_assertion(assertion):
                 attributes.setdefault(name, []).append(value.string)
     return attributes
 
-def _get_user_from_assertion(assertion):
+def _get_user_from_assertion(request, assertion):
     """
     Gets info out of the assertion and locally logs in this user.
     May create a local user account first.
@@ -104,8 +105,13 @@ def _get_user_from_assertion(assertion):
 
     #NOTE: Login will fail if the user has changed his password via the local
     # account. This actually is a good thing, I think.
-    user = authenticate(email=user.email,
-                        password=saml2sp_settings.SAML2SP_SAML_USER_PASSWORD)
+#    user = authenticate(email=user.email,
+#                        password=saml2sp_settings.SAML2SP_SAML_USER_PASSWORD)
+
+    backend = get_backends()[0]
+    user.backend = "%s.%s" % (backend.__module__, backend.__class__.__name__)
+    auth_login(request, user)
+
     if user is None:
         raise Exception('Unable to login user "%s" with SAML2SP_SAML_USER_PASSWORD' % email)
     return user
@@ -162,7 +168,7 @@ def sso_response(request):
     sso_session = request.POST.get('RelayState', None)
     data = request.POST.get('SAMLResponse', None)
     assertion = base64.b64decode(data)
-    user = _get_user_from_assertion(assertion)
+    user = _get_user_from_assertion(request, assertion)
     attributes = _get_attributes_from_assertion(assertion)
     login(request, user)
     tv = {
