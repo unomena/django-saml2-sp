@@ -99,7 +99,6 @@ def _get_user_from_assertion(request, assertion):
     except:
         user = User.objects.create_user(
             _email_to_username(email),
-            email,
             saml2sp_settings.SAML2SP_SAML_USER_PASSWORD
         )
 
