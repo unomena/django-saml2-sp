@@ -169,6 +169,8 @@ def sso_response(request):
     assertion = base64.b64decode(data)
     user = _get_user_from_assertion(request, assertion)
     attributes = _get_attributes_from_assertion(assertion)
+    user.salesforce_contact_id = attributes['contact_id']
+    user.save()
     login(request, user)
     tv = {
         'user': user,
