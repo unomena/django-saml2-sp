@@ -179,8 +179,11 @@ def sso_response(request):
         'attributes': attributes,
         'sso_destination': sso_session,
     }
-    return render_to_response('saml2sp/sso_complete.html', tv,
+    response = render_to_response('saml2sp/sso_complete.html', tv,
         context_instance=RequestContext(request))
+    response.set_cookie('customer', 'true')
+    return response
+
 
 @login_required
 def sso_test(request):
