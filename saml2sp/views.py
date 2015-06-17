@@ -50,7 +50,11 @@ def _get_email_from_assertion(assertion):
     soup = BeautifulStoneSoup(assertion)
     subject = soup.findAll('saml:subject')[0]
     name_id = subject.findAll('saml:nameid')[0]
-    email = name_id.string
+    email_splitted = name_id.string.split('@')
+    if len(email_splitted) == 3:
+        email = '%s@%s' % (email_splitted[1], email_splitted[2])
+    else:
+        email = '%s@%s' % (email_splitted[0], email_splitted[1])
     return email
 
 def _email_to_username(email):
@@ -169,8 +173,12 @@ def sso_response(request):
     assertion = base64.b64decode(data)
     user = _get_user_from_assertion(request, assertion)
     attributes = _get_attributes_from_assertion(assertion)
-    user.salesforce_contact_id = attributes['contact_id']
-    user.salesforce_user_id = attributes['user_id']
+    user.salesforce_contact_id = attributes.get('contact_id', '')
+    user.salesforce_user_id = attributes.get('user_id', '')
+    user.first_name = attributes.get('first_name', '')
+    user.last_name = attributes.get('last_name', '')
+    user.company = attributes.get('company', '')
+    user.phone = attributes.get('phone', '')
     user.save()
     login(request, user)
     tv = {

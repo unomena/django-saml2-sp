@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='saml2sp',
-    version='0.0.3.avi',
+    version='0.0.4.avi',
     description='SAML 2.0 Django Application',
     long_description = open('README.rst', 'r').read() + open('AUTHORS.rst', 'r').read(),
     author='Unomena',
