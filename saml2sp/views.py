@@ -175,6 +175,7 @@ def sso_response(request):
     attributes = _get_attributes_from_assertion(assertion)
     user.salesforce_contact_id = attributes.get('contact_id', '')
     user.salesforce_user_id = attributes.get('user_id', '')
+    user.salesforce_account_id = attributes.get('account_id', '')
     user.first_name = attributes.get('first_name', '')
     user.last_name = attributes.get('last_name', '')
     user.company = attributes.get('company', '')
